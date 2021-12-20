@@ -7,11 +7,41 @@ import {
   View,
   Pressable,
   Alert,
+  Switch,
 } from 'react-native';
+import { Audio } from 'expo-av';
+
 import { api } from './src/services/distanceApi';
 
 export default function App() {
+  const [isJp, setIsJp] = useState(false);
   const [sensorValue, setSensorValue] = useState(0);
+
+  // -------------------
+
+  const [sound, setSound] = useState();
+
+  async function playSound() {
+    console.log('Loading Sound');
+    const { sound } = await Audio.Sound.createAsync(
+      require('./assets/audios/H1.wav')
+    );
+    setSound(sound);
+
+    console.log('Playing Sound');
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          console.log('Unloading Sound');
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
+  // -------------------
 
   useEffect(() => {
     setTimeout(() => {
@@ -20,14 +50,17 @@ export default function App() {
   }, [sensorValue]);
 
   const fetchApi = () => {
-    api
-      .get()
-      .then((response) => {
-        setSensorValue(response.data.distance);
-      })
-      .catch(() => {
+    if (isJp) {
+      try {
+        api.get().then((response) => {
+          setSensorValue(response.data.distance);
+        });
+      } catch (err) {
         console.log(err);
-      });
+      }
+    } else {
+      Alert.alert('Ligue o JP env para teste');
+    }
   };
 
   const roundTwoDecimal = (num) => {
@@ -56,17 +89,26 @@ export default function App() {
         </View>
 
         <View style={styles.buttonContainer}>
-          <Pressable
-            style={styles.button}
-            onPress={() => {
-              fetchApi();
-            }}
-          >
+          <Pressable style={styles.button} onPress={fetchApi}>
             <Text style={styles.buttonText}>Get Sensor</Text>
           </Pressable>
         </View>
 
+        <View style={styles.buttonContainer}>
+          <Pressable style={styles.button} onPress={playSound}>
+            <Text style={styles.buttonText}>Play Audio</Text>
+          </Pressable>
+        </View>
+
         <View style={styles.separator} />
+        <Text style={styles.subtitle}>JP env?</Text>
+        <Switch
+          trackColor={{ false: '#767577', true: '##33ACFF' }}
+          thumbColor={isJp ? '#0C75BE' : '#f4f3f4'}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={() => setIsJp(!isJp)}
+          value={isJp}
+        />
       </View>
     </ScrollView>
   );
@@ -96,7 +138,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   separator: {
-    marginVertical: 8,
+    marginTop: 300,
     borderBottomColor: '#737373',
   },
   buttonContainer: {
