@@ -35,7 +35,7 @@ export default function App() {
   const playSound = async () => {
     console.log('Loading Sound');
     const { sound } = await Audio.Sound.createAsync(
-      require('./assets/audios/H1.wav')
+      require('./assets/audios/HAudios/H1.wav')
     );
     setSound(sound);
 
