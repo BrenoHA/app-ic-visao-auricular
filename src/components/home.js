@@ -15,7 +15,7 @@ import { plotSoundPlace } from '../utils/plotSoundPlace';
 import { MeasuredDistance } from './MeasuredDistance';
 import { SoundTable } from './SoundTable';
 import { DeveloperSettings } from './DeveloperSettings';
-
+import {definePort} from '../services/defineWebPort';
 // import { api } from './src/services/distanceApi';
 
 export const Home = () => {
@@ -55,7 +55,7 @@ export const Home = () => {
       Alert.alert('Ative as "Developer Settings" ');
     }
   };
-
+  definePort();
   // ------- SOUND -------
 
   const [sound, setSound] = useState();
