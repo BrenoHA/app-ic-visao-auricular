@@ -15,7 +15,7 @@ import { plotSoundPlace } from '../utils/plotSoundPlace';
 import { MeasuredDistance } from './MeasuredDistance';
 import { SoundTable } from './SoundTable';
 import { DeveloperSettings } from './DeveloperSettings';
-import {definePort} from '../services/defineWebPort';
+import { definePort } from '../services/defineWebPort';
 // import { api } from './src/services/distanceApi';
 
 export const Home = () => {
@@ -55,7 +55,15 @@ export const Home = () => {
       Alert.alert('Ative as "Developer Settings" ');
     }
   };
-  definePort();
+
+  const defineWebPort = async () => {
+    console.log('Clicou');
+
+    const port = await definePort();
+
+    console.log('HOME RETURN: ' + port);
+  };
+
   // ------- SOUND -------
 
   const [sound, setSound] = useState();
@@ -95,6 +103,11 @@ export const Home = () => {
         />
 
         {/* Buttons */}
+        <View style={styles.buttonContainer}>
+          <Pressable style={styles.button} onPress={defineWebPort}>
+            <Text style={styles.buttonText}>Define Web Port</Text>
+          </Pressable>
+        </View>
         <View style={styles.buttonContainer}>
           <Pressable style={styles.button} onPress={fetchApi}>
             <Text style={styles.buttonText}>Get Sensors</Text>
