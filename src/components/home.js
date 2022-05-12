@@ -15,7 +15,7 @@ import { plotSoundPlace } from '../utils/plotSoundPlace';
 import { MeasuredDistance } from './MeasuredDistance';
 import { SoundTable } from './SoundTable';
 import { DeveloperSettings } from './DeveloperSettings';
-import { definePort } from '../services/defineWebPort';
+import DefinidorDePorta from '../services/DefinidorDePorta';
 // import { api } from './src/services/distanceApi';
 
 export const Home = () => {
@@ -23,12 +23,8 @@ export const Home = () => {
   const [sensorLeft, setSensorLeft] = useState(0);
   const [sensorMiddle, setSensorMiddle] = useState(0);
   const [sensorRight, setSensorRight] = useState(0);
-  const [numberPort, setNumberPort] = useState('12');
+  const [numberPort, setNumberPort] = useState();
 
-  const api = axios.create({
-    baseURL: `http://192.168.1.${numberPort}`,
-    timeout: 5000,
-  });
 
   useEffect(() => {
     setTimeout(() => {
@@ -36,16 +32,25 @@ export const Home = () => {
     }, 1000);
   }, [sensorLeft, sensorMiddle, sensorRight]);
 
+  const simpleFetchApi = async () => {
+    let urlParaChamar = `http://${numberPort}/distanceMiddle`;
+    console.log(urlParaChamar);
+    await axios.get(urlParaChamar).then((response) => {
+      // setSensorMiddle(response.data.distance);
+      console.log(response.data)
+    });
+  };
+
   const fetchApi = async () => {
     if (isJp) {
       try {
-        await api.get(`/distanceLeft`).then((response) => {
+        await axios.get(`http://${numberPort}/distanceLeft`).then((response) => {
           setSensorLeft(response.data.distance);
         });
-        await api.get(`/distanceMiddle`).then((response) => {
+        await axios.get(`http://${numberPort}/distanceMiddle`).then((response) => {
           setSensorMiddle(response.data.distance);
         });
-        await api.get(`/distanceRight`).then((response) => {
+        await axios.get(`http://${numberPort}/distanceRight`).then((response) => {
           setSensorRight(response.data.distance);
         });
       } catch (err) {
@@ -57,13 +62,12 @@ export const Home = () => {
   };
 
   const defineWebPort = async () => {
-    console.log('Clicou');
-
-    const port = await definePort();
-
-    console.log('HOME RETURN: ' + port);
+    const definirPorta = new DefinidorDePorta();
+    const port = await definirPorta.returnPort();
+    console.log(port);
+    setNumberPort(port);
+    return port;
   };
-
   // ------- SOUND -------
 
   const [sound, setSound] = useState();
@@ -111,6 +115,11 @@ export const Home = () => {
         <View style={styles.buttonContainer}>
           <Pressable style={styles.button} onPress={fetchApi}>
             <Text style={styles.buttonText}>Get Sensors</Text>
+          </Pressable>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Pressable style={styles.button} onPress={simpleFetchApi}>
+            <Text style={styles.buttonText}>simpleFetchApi</Text>
           </Pressable>
         </View>
         <View style={styles.buttonContainer}>
