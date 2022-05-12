@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, View, Switch } from 'react-native';
 
 export const DeveloperSettings = ({
-  isJp,
-  setIsJp,
+  isDev,
+  setIsDev,
   setNumberPort,
   numberPort,
 }) => {
@@ -20,10 +20,10 @@ export const DeveloperSettings = ({
       />
       <Switch
         trackColor={{ false: '#767577', true: '##33ACFF' }}
-        thumbColor={isJp ? '#0C75BE' : '#f4f3f4'}
+        thumbColor={isDev ? '#0C75BE' : '#f4f3f4'}
         ios_backgroundColor="#3e3e3e"
-        onValueChange={() => setIsJp(!isJp)}
-        value={isJp}
+        onValueChange={() => setIsDev(!isDev)}
+        value={isDev}
       />
     </View>
   );

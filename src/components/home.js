@@ -11,62 +11,50 @@ import {
 import { Audio } from 'expo-av';
 import axios from 'axios';
 
-import { plotSoundPlace } from '../utils/plotSoundPlace';
 import { MeasuredDistance } from './MeasuredDistance';
 import { SoundTable } from './SoundTable';
-import { DeveloperSettings } from './DeveloperSettings';
-import DefinidorDePorta from '../services/DefinidorDePorta';
-// import { api } from './src/services/distanceApi';
+import { returnFullURL } from '../services/defineWebPort';
 
 export const Home = () => {
-  const [isJp, setIsJp] = useState(false);
   const [sensorLeft, setSensorLeft] = useState(0);
   const [sensorMiddle, setSensorMiddle] = useState(0);
   const [sensorRight, setSensorRight] = useState(0);
-  const [numberPort, setNumberPort] = useState();
+  const [sensorURL, setSensorURL] = useState();
 
-
-  useEffect(() => {
-    setTimeout(() => {
-      fetchApi();
-    }, 1000);
-  }, [sensorLeft, sensorMiddle, sensorRight]);
-
-  const simpleFetchApi = async () => {
-    let urlParaChamar = `http://${numberPort}/distanceMiddle`;
-    console.log(urlParaChamar);
-    await axios.get(urlParaChamar).then((response) => {
-      // setSensorMiddle(response.data.distance);
-      console.log(response.data)
-    });
-  };
+  // FETCH EVERY SECOND
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     fetchApi();
+  //   }, 1000);
+  // }, [sensorLeft, sensorMiddle, sensorRight]);
 
   const fetchApi = async () => {
-    if (isJp) {
-      try {
-        await axios.get(`http://${numberPort}/distanceLeft`).then((response) => {
+    try {
+      await axios.get(`${sensorURL}/distanceLeft`).then((response) => {
+        if (response.data?.distance) {
           setSensorLeft(response.data.distance);
-        });
-        await axios.get(`http://${numberPort}/distanceMiddle`).then((response) => {
-          setSensorMiddle(response.data.distance);
-        });
-        await axios.get(`http://${numberPort}/distanceRight`).then((response) => {
-          setSensorRight(response.data.distance);
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      Alert.alert('Ative as "Developer Settings" ');
+        }
+      });
+      await axios.get(`${sensorURL}/distanceMiddle`).then((response) => {
+        if (response.data?.distance) {
+          setSensorLeft(response.data.distance);
+        }
+      });
+      await axios.get(`${sensorURL}/distanceRight`).then((response) => {
+        if (response.data?.distance) {
+          setSensorLeft(response.data.distance);
+        }
+      });
+    } catch (err) {
+      console.log(err);
     }
   };
 
   const defineWebPort = async () => {
-    const definirPorta = new DefinidorDePorta();
-    const port = await definirPorta.returnPort();
-    console.log(port);
-    setNumberPort(port);
-    return port;
+    const url = await returnFullURL();
+    console.log(url);
+    setSensorURL(`http://${url}`);
+    return url;
   };
   // ------- SOUND -------
 
@@ -106,7 +94,6 @@ export const Home = () => {
           sensorRight={sensorRight}
         />
 
-        {/* Buttons */}
         <View style={styles.buttonContainer}>
           <Pressable style={styles.button} onPress={defineWebPort}>
             <Text style={styles.buttonText}>Define Web Port</Text>
@@ -118,28 +105,15 @@ export const Home = () => {
           </Pressable>
         </View>
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={simpleFetchApi}>
-            <Text style={styles.buttonText}>simpleFetchApi</Text>
-          </Pressable>
-        </View>
-        <View style={styles.buttonContainer}>
           <Pressable style={styles.button} onPress={playSound}>
-            <Text style={styles.buttonText}>Play Audio</Text>
+            <Text style={styles.buttonText}>Test Audio</Text>
           </Pressable>
         </View>
-        {/* /Buttons */}
 
         <SoundTable
           sensorLeft={sensorLeft}
           sensorMiddle={sensorMiddle}
           sensorRight={sensorRight}
-        />
-
-        <DeveloperSettings
-          isJp={isJp}
-          setIsJp={setIsJp}
-          setNumberPort={setNumberPort}
-          numberPort={numberPort}
         />
       </View>
     </ScrollView>
