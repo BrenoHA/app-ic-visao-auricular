@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, StyleSheet } from 'react-native';
+import { defaultDistance } from './defaultDistances';
 
 export const plotSoundPlace = (distance) => {
   if (distance === 0) {
@@ -12,7 +13,7 @@ export const plotSoundPlace = (distance) => {
       </>
     );
   }
-  if (distance <= 30) {
+  if (distance <= defaultDistance[1]) {
     return (
       <>
         <Text style={styles.textSensores}>- </Text>
@@ -22,7 +23,7 @@ export const plotSoundPlace = (distance) => {
       </>
     );
   }
-  if (distance <= 50) {
+  if (distance <= defaultDistance[2]) {
     return (
       <>
         <Text style={styles.textSensores}>- </Text>
@@ -32,7 +33,7 @@ export const plotSoundPlace = (distance) => {
       </>
     );
   }
-  if (distance <= 100) {
+  if (distance <= defaultDistance[3]) {
     return (
       <>
         <Text style={styles.textSensores}>- </Text>
@@ -42,7 +43,7 @@ export const plotSoundPlace = (distance) => {
       </>
     );
   }
-  if (distance > 100) {
+  if (distance > defaultDistance[3]) {
     return (
       <>
         <Text style={styles.textSensores}>X </Text>
