@@ -11,7 +11,7 @@ export const MeasuredDistance = ({ sensorLeft, sensorMiddle, sensorRight }) => {
 
   return (
     <View style={styles.cardSoundPlace}>
-      <Text style={styles.subtitle}>Distancia medida:</Text>
+      <Text style={styles.subtitle}>Distancia medida (cm)</Text>
       <View style={styles.boxViewSoundPlace}>
         <View style={styles.viewSoundPlace}>
           <Text style={styles.textSensores}>Sensor L</Text>

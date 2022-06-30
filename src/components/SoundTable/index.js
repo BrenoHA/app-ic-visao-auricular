@@ -5,7 +5,7 @@ import { plotSoundPlace } from '../../utils/plotSoundPlace';
 export const SoundTable = ({ sensorLeft, sensorMiddle, sensorRight }) => {
   return (
     <View style={styles.cardSoundPlace}>
-      <Text style={styles.subtitle}>Som:</Text>
+      <Text style={styles.subtitle}>Som</Text>
       <View style={styles.boxViewSoundPlace}>
         <View style={styles.viewSoundPlace}>
           <Text style={styles.textSensores}>Sensor L</Text>

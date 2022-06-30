@@ -14,56 +14,25 @@ import axios from 'axios';
 import { MeasuredDistance } from './MeasuredDistance';
 import { SoundTable } from './SoundTable';
 import { returnFullURL } from '../services/defineWebPort';
+import { defaultDistance } from '../utils/defaultDistances';
 
 export const Home = () => {
   const [sensorLeft, setSensorLeft] = useState(0);
   const [sensorMiddle, setSensorMiddle] = useState(0);
   const [sensorRight, setSensorRight] = useState(0);
   const [sensorURL, setSensorURL] = useState();
+  const [isOn, setIsOn] = useState(true);
 
-  // FETCH EVERY SECOND
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     fetchApi();
-  //   }, 1000);
-  // }, [sensorLeft, sensorMiddle, sensorRight]);
-
-  const fetchApi = async () => {
-    try {
-      await axios.get(`${sensorURL}/distanceLeft`).then((response) => {
-        if (response.data?.distance) {
-          setSensorLeft(response.data.distance);
-        }
-      });
-      await axios.get(`${sensorURL}/distanceMiddle`).then((response) => {
-        if (response.data?.distance) {
-          setSensorLeft(response.data.distance);
-        }
-      });
-      await axios.get(`${sensorURL}/distanceRight`).then((response) => {
-        if (response.data?.distance) {
-          setSensorLeft(response.data.distance);
-        }
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const defineWebPort = async () => {
-    const url = await returnFullURL();
-    console.log(url);
-    setSensorURL(`http://${url}`);
-    return url;
-  };
   // ------- SOUND -------
 
   const [sound, setSound] = useState();
 
   const playSound = async () => {
     console.log('Loading Sound');
+    // MAKE RELATIVE PATH HERE
+    // const path = `../../assets/audios/HAudios/H${distance}_${orientation}.wav`;
     const { sound } = await Audio.Sound.createAsync(
-      require('../../assets/audios/HAudios/H1.wav')
+      require('../../assets/audios/HAudios/H2_C.wav')
     );
     setSound(sound);
 
@@ -82,10 +51,77 @@ export const Home = () => {
 
   // ------- SOUND -------
 
+  useEffect(() => {
+    console.log('a');
+    playSound();
+  }, [sensorLeft]);
+  useEffect(() => {
+    console.log('b');
+    playSound();
+  }, [sensorMiddle]);
+  useEffect(() => {
+    console.log('c');
+    playSound();
+  }, [sensorRight]);
+
+  const toggleSensors = () => {
+    setIsOn(!isOn);
+    if (isOn) {
+      fetchApi();
+    }
+  };
+
+  const fetchApi = async () => {
+    try {
+      setTimeout(() => {
+        console.log('a');
+        axios.get(`${sensorURL}/distanceLeft`).then((response) => {
+          if (response.data?.distance) {
+            setSensorLeft(response.data.distance);
+          }
+        });
+        setTimeout(() => {
+          console.log('b');
+          axios.get(`${sensorURL}/distanceMiddle`).then((response) => {
+            if (response.data?.distance) {
+              setSensorMiddle(response.data.distance);
+            }
+          });
+          setTimeout(() => {
+            console.log('c');
+            axios.get(`${sensorURL}/distanceRight`).then((response) => {
+              if (response.data?.distance) {
+                setSensorRight(response.data.distance);
+              }
+            });
+            if (isOn) {
+              setTimeout(fetchApi, 2000);
+            }
+          }, 1000);
+        }, 1000);
+      }, 1000);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const defineWebPort = async () => {
+    console.log('defineWebPort pressed');
+    const url = await returnFullURL();
+    console.log(url);
+    setSensorURL(`http://${url}`);
+    return url;
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
         <StatusBar style="auto" />
+        {/* {isOn ? (
+          <Text style={styles.appTitleOn}>Visão Auricular</Text>
+        ) : (
+          <Text style={styles.appTitle}>Visão Auricular</Text>
+          )} */}
         <Text style={styles.appTitle}>Visão Auricular</Text>
 
         <MeasuredDistance
@@ -100,8 +136,8 @@ export const Home = () => {
           </Pressable>
         </View>
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={fetchApi}>
-            <Text style={styles.buttonText}>Get Sensors</Text>
+          <Pressable style={styles.button} onPress={toggleSensors}>
+            <Text style={styles.buttonText}>Toggle Sensors</Text>
           </Pressable>
         </View>
         <View style={styles.buttonContainer}>
@@ -128,6 +164,12 @@ const styles = StyleSheet.create({
   },
   appTitle: {
     color: '#1b1b1b',
+    fontWeight: 'bold',
+    fontSize: 32,
+    marginTop: 60,
+  },
+  appTitleOn: {
+    color: '#128230',
     fontWeight: 'bold',
     fontSize: 32,
     marginTop: 60,

@@ -9,11 +9,12 @@ const getPort = async () => {
 
 const requestPort = async (url) => {
   let valorURL = await axios
-    .get(url)
+    .get(url, { timeout: 2000 })
     .then((response) => {
       return response.data.server;
     })
     .catch((error) => {});
+
   if (valorURL != undefined) {
     return valorURL;
   }
@@ -25,9 +26,10 @@ export const returnFullURL = async () => {
   let fullURL = defaultPort;
 
   // Tries in each port
-  for (let index = 10; index <= 15; index++) {
+  for (let index = 100; index <= 180; index++) {
     let baseURL = `${defaultPort}${index}`;
     let tempURL = `${baseURL}/startServer`;
+    console.log(tempURL);
 
     let valorTemp = await requestPort(tempURL);
     if (valorTemp != undefined) {
