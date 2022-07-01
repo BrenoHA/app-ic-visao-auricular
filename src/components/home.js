@@ -28,30 +28,45 @@ export const Home = () => {
 
   const [sound, setSound] = useState();
 
-  // const playSound = async () => {
+  const playSound = async (a, b) => {
+    console.log('Loading Sound');
+    const { sound } = await Audio.Sound.createAsync(
+      require('../../assets/audios/HAudios/H2_L.wav')
+    );
+    setSound(sound);
+
+    console.log('Playing Sound');
+    await sound.playAsync();
+  };
+
+  // const playSound = async (distance, orientation) => {
   //   console.log('Loading Sound');
-  //   const { sound } = await Audio.Sound.createAsync(
-  //     require('../../assets/audios/HAudios/H2_C.wav')
-  //   );
+
+  //   audioUrl = `../../assets/audios/HAudios/H${distance}_${orientation}.wav`;
+  //   // audioUrl = '../../assets/audios/HAudios/H2_L.wav';
+  //   console.log(audioUrl);
+
+  //   const source = { uri: audioUrl };
+  //   const { sound } = await Audio.Sound.createAsync(source);
   //   setSound(sound);
 
   //   console.log('Playing Sound');
   //   await sound.playAsync();
   // };
 
-  const playSound = async (distance, orientation) => {
-    console.log('Loading Sound');
+  // const playSound = async (distance, orientation) => {
+  //   console.log('Loading Sound');
 
-    audioUrl = `../../assets/audios/HAudios/H${distance}_${orientation}.wav`;
-    console.log(audioUrl);
+  //   audioUrl = 'S1.wav';
+  //   console.log(audioUrl);
 
-    // const source = { uri: audioUrl };
-    const { sound } = await Audio.Sound.createAsync({ uri: audioUrl });
-    setSound(sound);
+  //   // const source = { uri: audioUrl };
+  //   const { sound } = await Audio.Sound.createAsync({ uri: audioUrl });
+  //   setSound(sound);
 
-    console.log('Playing Sound');
-    await sound.playAsync();
-  };
+  //   console.log('Playing Sound');
+  //   await sound.playAsync();
+  // };
 
   useEffect(() => {
     return sound
