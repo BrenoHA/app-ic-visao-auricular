@@ -14,7 +14,7 @@ import axios from 'axios';
 import { MeasuredDistance } from './MeasuredDistance';
 import { SoundTable } from './SoundTable';
 import { returnFullURL } from '../services/defineWebPort';
-import { defaultDistance } from '../utils/defaultDistances';
+import { getDefaultDistance } from '../utils/defaultDistances';
 
 export const Home = () => {
   const [sensorLeft, setSensorLeft] = useState(0);
@@ -22,18 +22,31 @@ export const Home = () => {
   const [sensorRight, setSensorRight] = useState(0);
   const [sensorURL, setSensorURL] = useState();
   const [isOn, setIsOn] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // ------- SOUND -------
 
   const [sound, setSound] = useState();
 
-  const playSound = async () => {
+  // const playSound = async () => {
+  //   console.log('Loading Sound');
+  //   const { sound } = await Audio.Sound.createAsync(
+  //     require('../../assets/audios/HAudios/H2_C.wav')
+  //   );
+  //   setSound(sound);
+
+  //   console.log('Playing Sound');
+  //   await sound.playAsync();
+  // };
+
+  const playSound = async (distance, orientation) => {
     console.log('Loading Sound');
-    // MAKE RELATIVE PATH HERE
-    // const path = `../../assets/audios/HAudios/H${distance}_${orientation}.wav`;
-    const { sound } = await Audio.Sound.createAsync(
-      require('../../assets/audios/HAudios/H2_C.wav')
-    );
+
+    audioUrl = `../../assets/audios/HAudios/H${distance}_${orientation}.wav`;
+    console.log(audioUrl);
+
+    // const source = { uri: audioUrl };
+    const { sound } = await Audio.Sound.createAsync({ uri: audioUrl });
     setSound(sound);
 
     console.log('Playing Sound');
@@ -53,15 +66,18 @@ export const Home = () => {
 
   useEffect(() => {
     console.log('a');
-    playSound();
+    console.log(getDefaultDistance(sensorLeft));
+    playSound(getDefaultDistance(sensorLeft), 'L');
   }, [sensorLeft]);
   useEffect(() => {
     console.log('b');
-    playSound();
+    console.log(getDefaultDistance(sensorMiddle));
+    playSound(getDefaultDistance(sensorMiddle), 'C');
   }, [sensorMiddle]);
   useEffect(() => {
     console.log('c');
-    playSound();
+    console.log(getDefaultDistance(sensorRight));
+    playSound(getDefaultDistance(sensorRight), 'R');
   }, [sensorRight]);
 
   const toggleSensors = () => {
@@ -107,8 +123,10 @@ export const Home = () => {
 
   const defineWebPort = async () => {
     console.log('defineWebPort pressed');
+    setIsLoading(true);
     const url = await returnFullURL();
     console.log(url);
+    setIsLoading(false);
     setSensorURL(`http://${url}`);
     return url;
   };
@@ -135,13 +153,15 @@ export const Home = () => {
             <Text style={styles.buttonText}>Define Web Port</Text>
           </Pressable>
         </View>
+        {isLoading && <Text style={styles.simpleText}>Loading...</Text>}
+        {sensorURL != '' && <Text style={styles.simpleText}>{sensorURL}</Text>}
         <View style={styles.buttonContainer}>
           <Pressable style={styles.button} onPress={toggleSensors}>
             <Text style={styles.buttonText}>Toggle Sensors</Text>
           </Pressable>
         </View>
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={playSound}>
+          <Pressable style={styles.button} onPress={() => playSound(1, 'C')}>
             <Text style={styles.buttonText}>Test Audio</Text>
           </Pressable>
         </View>
@@ -192,5 +212,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 0.25,
     color: 'white',
+  },
+  simpleText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: 'black',
   },
 });
