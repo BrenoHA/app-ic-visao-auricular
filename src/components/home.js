@@ -22,32 +22,27 @@ export const Home = () => {
   const [sensorMiddle, setSensorMiddle] = useState(0);
   const [sensorRight, setSensorRight] = useState(0);
   const [sensorURL, setSensorURL] = useState();
-  const [isOn, setIsOn] = useState(true);
+  const [isOn, setIsOn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // ------- SOUND -------
 
   const soundObjects = {};
 
-  const load = (library) => {
+  const loadAudios = () => {
+    console.log('loadAudios');
+
     const promisedSoundObjects = [];
 
-    for (const name in library) {
-      const sound = library[name];
+    for (const name in soundLibrary) {
+      const sound = soundLibrary[name];
 
       soundObjects[name] = new Audio.Sound();
 
       promisedSoundObjects.push(soundObjects[name].loadAsync(sound));
     }
 
-    return promisedSoundObjects;
-  };
-
-  const loadAudios = () => {
-    console.log('loadAudios');
-    const sounds = load(soundLibrary);
-
-    return Promise.all([...sounds]);
+    return Promise.all([...promisedSoundObjects]);
   };
 
   const playSound = async (name) => {
@@ -62,83 +57,94 @@ export const Home = () => {
 
   // ------- SOUND -------
 
-  useEffect(() => {
-    console.log('a');
-    console.log(getDefaultDistance(sensorLeft));
-    playSound(getDefaultDistance(sensorLeft), 'L');
-  }, [sensorLeft]);
-  useEffect(() => {
-    console.log('b');
-    console.log(getDefaultDistance(sensorMiddle));
-    playSound(getDefaultDistance(sensorMiddle), 'C');
-  }, [sensorMiddle]);
-  useEffect(() => {
-    console.log('c');
-    console.log(getDefaultDistance(sensorRight));
-    playSound(getDefaultDistance(sensorRight), 'R');
-  }, [sensorRight]);
-
-  const toggleSensors = () => {
-    setIsOn(!isOn);
-    if (isOn) {
-      fetchApi();
-    }
-  };
-
-  const fetchApi = async () => {
-    try {
-      setTimeout(() => {
-        console.log('a');
-        axios.get(`${sensorURL}/distanceLeft`).then((response) => {
-          if (response.data?.distance) {
-            setSensorLeft(response.data.distance);
-          }
-        });
-        setTimeout(() => {
-          console.log('b');
-          axios.get(`${sensorURL}/distanceMiddle`).then((response) => {
-            if (response.data?.distance) {
-              setSensorMiddle(response.data.distance);
-            }
-          });
-          setTimeout(() => {
-            console.log('c');
-            axios.get(`${sensorURL}/distanceRight`).then((response) => {
-              if (response.data?.distance) {
-                setSensorRight(response.data.distance);
-              }
-            });
-            if (isOn) {
-              setTimeout(fetchApi, 2000);
-            }
-          }, 1000);
-        }, 1000);
-      }, 1000);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const defineWebPort = async () => {
     console.log('defineWebPort pressed');
-    setIsLoading(true);
-    const url = await returnFullURL();
+    let url = '';
+    if (!isLoading) {
+      setIsLoading(true);
+      url = await returnFullURL();
+    }
     console.log(url);
     setIsLoading(false);
-    setSensorURL(`http://${url}`);
+    setSensorURL(url);
     return url;
+  };
+
+  useEffect(() => {
+    fetchApi();
+  }, [isOn]);
+
+  const fetchApi = async () => {
+    if (isOn) {
+      console.log('Entrou no if');
+      try {
+        setTimeout(() => {
+          console.log('a');
+          axios
+            .get(`${sensorURL}/distanceLeft`)
+            .then((response) => {
+              if (response.data?.distance) {
+                setSensorLeft(response.data.distance);
+                console.log(response.data.distance);
+                playSound(`H${getDefaultDistance(response.data.distance)}_L`);
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+          setTimeout(() => {
+            console.log('b');
+            axios
+              .get(`${sensorURL}/distanceMiddle`)
+              .then((response) => {
+                if (response.data?.distance) {
+                  setSensorMiddle(response.data.distance);
+                  console.log(response.data.distance);
+                  playSound(`H${getDefaultDistance(response.data.distance)}_C`);
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+            setTimeout(() => {
+              console.log('c');
+              axios
+                .get(`${sensorURL}/distanceRight`)
+                .then((response) => {
+                  if (response.data?.distance) {
+                    setSensorRight(response.data.distance);
+                    console.log(response.data.distance);
+                    playSound(
+                      `H${getDefaultDistance(response.data.distance)}_R`
+                    );
+                  }
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+              if (isOn) {
+                setTimeout(fetchApi, 2000);
+              }
+            }, 1500);
+          }, 1500);
+        }, 1500);
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      console.log('fetchApi Stopped');
+    }
   };
 
   return (
     <ScrollView>
       <View style={styles.container}>
         <StatusBar style="auto" />
-        {/* {isOn ? (
+        {isOn ? (
           <Text style={styles.appTitleOn}>Visão Auricular</Text>
         ) : (
           <Text style={styles.appTitle}>Visão Auricular</Text>
-          )} */}
-        <Text style={styles.appTitle}>Visão Auricular</Text>
+        )}
 
         <MeasuredDistance
           sensorLeft={sensorLeft}
@@ -147,17 +153,32 @@ export const Home = () => {
         />
 
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={defineWebPort}>
+          <Pressable
+            style={[
+              styles.button,
+              { backgroundColor: isLoading ? 'gray' : '#0091BE' },
+            ]}
+            disabled={isLoading}
+            onPress={defineWebPort}
+          >
             <Text style={styles.buttonText}>Definir Porta Web</Text>
           </Pressable>
         </View>
         {isLoading && <Text style={styles.simpleText}>Loading...</Text>}
         {sensorURL != '' && <Text style={styles.simpleText}>{sensorURL}</Text>}
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={toggleSensors}>
+          <Pressable
+            style={[
+              styles.button,
+              { backgroundColor: isOn ? 'gray' : '#0091BE' },
+            ]}
+            disabled={isOn}
+            onPress={() => setIsOn(true)}
+          >
             <Text style={styles.buttonText}>Ligar sensores</Text>
           </Pressable>
         </View>
+
         <View style={styles.buttonContainer}>
           <Pressable style={styles.button} onPress={loadAudios}>
             <Text style={styles.buttonText}>Carregar Audios</Text>
@@ -166,11 +187,6 @@ export const Home = () => {
         <View style={styles.buttonContainer}>
           <Pressable style={styles.button} onPress={() => playSound('H1_C')}>
             <Text style={styles.buttonText}>Testar Audio</Text>
-          </Pressable>
-        </View>
-        <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={() => playSound('H3_C')}>
-            <Text style={styles.buttonText}>Testar Audio2</Text>
           </Pressable>
         </View>
 

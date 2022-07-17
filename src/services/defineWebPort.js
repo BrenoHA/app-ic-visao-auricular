@@ -26,7 +26,7 @@ export const returnFullURL = async () => {
   let fullURL = defaultPort;
 
   // Tries in each port
-  for (let index = 100; index <= 180; index++) {
+  for (let index = 1; index <= 255; index++) {
     let baseURL = `${defaultPort}${index}`;
     let tempURL = `${baseURL}/startServer`;
     console.log(tempURL);
