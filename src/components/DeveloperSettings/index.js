@@ -1,12 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View, Switch } from 'react-native';
+import * as NetWork from 'expo-network';
 
-export const DeveloperSettings = ({
-  isDev,
-  setIsDev,
-  setNumberPort,
-  numberPort,
-}) => {
+export const DeveloperSettings = ({ setSensorURL }) => {
+  const getPort = async () => {
+    let valor = await NetWork.getIpAddressAsync().then();
+    let strings = valor.split('.');
+    return `http://${strings[0]}.${strings[1]}.${strings[2]}.`;
+  };
+
+  const [numberPort, setNumberPort] = useState('');
+  const [fullUrl, setFullUrl] = useState('');
+
+  const makeUrl = async (port) => {
+    const baseUrl = await getPort();
+    setFullUrl(baseUrl + numberPort);
+    console.log(fullUrl);
+  };
+
+  useEffect(() => {
+    makeUrl(numberPort);
+  }, [numberPort]);
+
+  useEffect(() => {
+    console.log(fullUrl);
+    setSensorURL(fullUrl);
+  }, [fullUrl]);
+
   return (
     <View style={styles.container}>
       <View style={styles.separator} />
@@ -18,13 +38,13 @@ export const DeveloperSettings = ({
         placeholder="XX"
         keyboardType="numeric"
       />
-      <Switch
+      {/* <Switch
         trackColor={{ false: '#767577', true: '##33ACFF' }}
         thumbColor={isDev ? '#0C75BE' : '#f4f3f4'}
         ios_backgroundColor="#3e3e3e"
         onValueChange={() => setIsDev(!isDev)}
         value={isDev}
-      />
+      /> */}
     </View>
   );
 };
@@ -36,7 +56,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   separator: {
-    marginTop: 300,
+    marginTop: 100,
     borderBottomColor: '#737373',
   },
   subtitle: {
@@ -50,5 +70,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 6,
     padding: 10,
+    marginBottom: 20,
   },
 });

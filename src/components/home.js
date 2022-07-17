@@ -16,6 +16,7 @@ import { MeasuredDistance } from './MeasuredDistance';
 import { SoundTable } from './SoundTable';
 import { returnFullURL } from '../services/defineWebPort';
 import { getDefaultDistance } from '../utils/defaultDistances';
+import { DeveloperSettings } from './DeveloperSettings';
 
 export const Home = () => {
   const [sensorLeft, setSensorLeft] = useState(0);
@@ -196,6 +197,7 @@ export const Home = () => {
           sensorRight={sensorRight}
         />
       </View>
+      <DeveloperSettings setSensorURL={setSensorURL} />
     </ScrollView>
   );
 };
