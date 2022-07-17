@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Audio } from 'expo-av';
 import axios from 'axios';
+import soundLibrary from '../utils/soundLibrary';
 
 import { MeasuredDistance } from './MeasuredDistance';
 import { SoundTable } from './SoundTable';
@@ -26,56 +27,38 @@ export const Home = () => {
 
   // ------- SOUND -------
 
-  const [sound, setSound] = useState();
+  const soundObjects = {};
 
-  const playSound = async (a, b) => {
-    console.log('Loading Sound');
-    const { sound } = await Audio.Sound.createAsync(
-      require('../../assets/audios/HAudios/H2_L.wav')
-    );
-    setSound(sound);
+  const load = (library) => {
+    const promisedSoundObjects = [];
 
-    console.log('Playing Sound');
-    await sound.playAsync();
+    for (const name in library) {
+      const sound = library[name];
+
+      soundObjects[name] = new Audio.Sound();
+
+      promisedSoundObjects.push(soundObjects[name].loadAsync(sound));
+    }
+
+    return promisedSoundObjects;
   };
 
-  // const playSound = async (distance, orientation) => {
-  //   console.log('Loading Sound');
+  const loadAudios = () => {
+    console.log('loadAudios');
+    const sounds = load(soundLibrary);
 
-  //   audioUrl = `../../assets/audios/HAudios/H${distance}_${orientation}.wav`;
-  //   // audioUrl = '../../assets/audios/HAudios/H2_L.wav';
-  //   console.log(audioUrl);
+    return Promise.all([...sounds]);
+  };
 
-  //   const source = { uri: audioUrl };
-  //   const { sound } = await Audio.Sound.createAsync(source);
-  //   setSound(sound);
-
-  //   console.log('Playing Sound');
-  //   await sound.playAsync();
-  // };
-
-  // const playSound = async (distance, orientation) => {
-  //   console.log('Loading Sound');
-
-  //   audioUrl = 'S1.wav';
-  //   console.log(audioUrl);
-
-  //   // const source = { uri: audioUrl };
-  //   const { sound } = await Audio.Sound.createAsync({ uri: audioUrl });
-  //   setSound(sound);
-
-  //   console.log('Playing Sound');
-  //   await sound.playAsync();
-  // };
-
-  useEffect(() => {
-    return sound
-      ? () => {
-          console.log('Unloading Sound');
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
+  const playSound = async (name) => {
+    try {
+      if (soundObjects[name]) {
+        await soundObjects[name].replayAsync();
+      }
+    } catch (error) {
+      console.warn(error);
+    }
+  };
 
   // ------- SOUND -------
 
@@ -165,19 +148,29 @@ export const Home = () => {
 
         <View style={styles.buttonContainer}>
           <Pressable style={styles.button} onPress={defineWebPort}>
-            <Text style={styles.buttonText}>Define Web Port</Text>
+            <Text style={styles.buttonText}>Definir Porta Web</Text>
           </Pressable>
         </View>
         {isLoading && <Text style={styles.simpleText}>Loading...</Text>}
         {sensorURL != '' && <Text style={styles.simpleText}>{sensorURL}</Text>}
         <View style={styles.buttonContainer}>
           <Pressable style={styles.button} onPress={toggleSensors}>
-            <Text style={styles.buttonText}>Toggle Sensors</Text>
+            <Text style={styles.buttonText}>Ligar sensores</Text>
           </Pressable>
         </View>
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={() => playSound(1, 'C')}>
-            <Text style={styles.buttonText}>Test Audio</Text>
+          <Pressable style={styles.button} onPress={loadAudios}>
+            <Text style={styles.buttonText}>Carregar Audios</Text>
+          </Pressable>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Pressable style={styles.button} onPress={() => playSound('H1_C')}>
+            <Text style={styles.buttonText}>Testar Audio</Text>
+          </Pressable>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Pressable style={styles.button} onPress={() => playSound('H3_C')}>
+            <Text style={styles.buttonText}>Testar Audio2</Text>
           </Pressable>
         </View>
 
