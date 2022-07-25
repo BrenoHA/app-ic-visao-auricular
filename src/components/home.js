@@ -75,18 +75,31 @@ export const Home = () => {
     fetchApi();
   }, [isOn]);
 
-  const fetchApi = () => {
+  // const getDistance = (endpoint) => {
+  //   return axios
+  //     .get(`${sensorURL}/distance${endpoint}`)
+  //     .then((response) => {
+  //       if (response.data?.distance) {
+  //         setSensorLeft(response.data.distance);
+  //         console.log('L -> ' + response.data.distance);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
+
+  const fetchApi = async () => {
     if (isOn) {
       console.log('Entrou no if');
 
       setTimeout(() => {
-        console.log('a');
         axios
           .get(`${sensorURL}/distanceLeft`)
           .then((response) => {
             if (response.data?.distance) {
               setSensorLeft(response.data.distance);
-              console.log(response.data.distance);
+              console.log('L -> ' + response.data.distance);
               playSound(`H1_L`);
             }
           })
@@ -94,13 +107,12 @@ export const Home = () => {
             console.log(err);
           });
         setTimeout(() => {
-          console.log('b');
           axios
             .get(`${sensorURL}/distanceMiddle`)
             .then((response) => {
               if (response.data?.distance) {
                 setSensorMiddle(response.data.distance);
-                console.log(response.data.distance);
+                console.log('C -> ' + response.data.distance);
                 playSound(`H1_C`);
               }
             })
@@ -108,23 +120,22 @@ export const Home = () => {
               console.log(err);
             });
           setTimeout(() => {
-            console.log('c');
             axios
               .get(`${sensorURL}/distanceRight`)
               .then((response) => {
                 if (response.data?.distance) {
                   setSensorRight(response.data.distance);
-                  console.log(response.data.distance);
+                  console.log('R -> ' + response.data.distance);
                   playSound(`H1_R`);
                 }
               })
               .catch((err) => {
                 console.log(err);
               });
-            setTimeout(fetchApi, 800);
-          }, 500);
-        }, 500);
-      }, 500);
+            setTimeout(fetchApi, 500);
+          }, 300);
+        }, 300);
+      }, 300);
     } else {
       console.log('fetchApi Stopped');
     }
@@ -143,10 +154,10 @@ export const Home = () => {
           console.log('c');
           playSound(`H3_R`);
 
-          setTimeout(playMultiple, 800);
-        }, 500);
-      }, 500);
-    }, 500);
+          setTimeout(playMultiple, 500);
+        }, 300);
+      }, 300);
+    }, 300);
   };
 
   return (
