@@ -40,10 +40,9 @@ import axios from 'axios';
 //   return fullURL;
 // };
 
-
 const requestPort = async (url) => {
   let valorURL = await axios
-    .get(url, { timeout: 2000 })
+    .get(`${url}/startServer`, { timeout: 2000 })
     .then((response) => {
       return response.data.server;
     })
@@ -56,12 +55,18 @@ const requestPort = async (url) => {
 
 export const returnFullURL = async () => {
   let browserAgain = true;
-  while(browserAgain){
-    let url = await axios.get("http://jpedrogama.pythonanywhere.com/port").then(response => {return response});
-    let hasResponse = await requestPort(url.data.ip);
-    if(hasResponse){
-      browserAgain=false;
-    }
+  let url;
+  while (browserAgain) {
+    url = await axios
+      .get('http://jpedrogama.pythonanywhere.com/port')
+      .then((response) => {
+        return response;
+      });
+    browserAgain = false;
+    // let hasResponse = await requestPort(url.data.ip);
+    // if (hasResponse) {
+    //   browserAgain = false;
+    // }
   }
-  return url.ip;
-}
+  return 'http://' + url.data.ip;
+};

@@ -75,66 +75,78 @@ export const Home = () => {
     fetchApi();
   }, [isOn]);
 
-  const fetchApi = async () => {
+  const fetchApi = () => {
     if (isOn) {
       console.log('Entrou no if');
-      try {
+
+      setTimeout(() => {
+        console.log('a');
+        axios
+          .get(`${sensorURL}/distanceLeft`)
+          .then((response) => {
+            if (response.data?.distance) {
+              setSensorLeft(response.data.distance);
+              console.log(response.data.distance);
+              playSound(`H1_L`);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
         setTimeout(() => {
-          console.log('a');
+          console.log('b');
           axios
-            .get(`${sensorURL}/distanceLeft`)
+            .get(`${sensorURL}/distanceMiddle`)
             .then((response) => {
               if (response.data?.distance) {
-                setSensorLeft(response.data.distance);
+                setSensorMiddle(response.data.distance);
                 console.log(response.data.distance);
-                playSound(`H${getDefaultDistance(response.data.distance)}_L`);
+                playSound(`H1_C`);
               }
             })
             .catch((err) => {
               console.log(err);
             });
           setTimeout(() => {
-            console.log('b');
+            console.log('c');
             axios
-              .get(`${sensorURL}/distanceMiddle`)
+              .get(`${sensorURL}/distanceRight`)
               .then((response) => {
                 if (response.data?.distance) {
-                  setSensorMiddle(response.data.distance);
+                  setSensorRight(response.data.distance);
                   console.log(response.data.distance);
-                  playSound(`H${getDefaultDistance(response.data.distance)}_C`);
+                  playSound(`H1_R`);
                 }
               })
               .catch((err) => {
                 console.log(err);
               });
-            setTimeout(() => {
-              console.log('c');
-              axios
-                .get(`${sensorURL}/distanceRight`)
-                .then((response) => {
-                  if (response.data?.distance) {
-                    setSensorRight(response.data.distance);
-                    console.log(response.data.distance);
-                    playSound(
-                      `H${getDefaultDistance(response.data.distance)}_R`
-                    );
-                  }
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-              if (isOn) {
-                setTimeout(fetchApi, 2000);
-              }
-            }, 1500);
-          }, 1500);
-        }, 1500);
-      } catch (err) {
-        console.log(err);
-      }
+            setTimeout(fetchApi, 800);
+          }, 500);
+        }, 500);
+      }, 500);
     } else {
       console.log('fetchApi Stopped');
     }
+  };
+
+  const playMultiple = () => {
+    setTimeout(() => {
+      console.log('a');
+      playSound(`H1_L`);
+
+      setTimeout(() => {
+        console.log('b');
+        playSound(`H2_C`);
+
+        setTimeout(() => {
+          console.log('c');
+          playSound(`H3_R`);
+
+          setTimeout(playMultiple, 800);
+        }, 500);
+      }, 500);
+    }, 500);
   };
 
   return (
@@ -188,6 +200,11 @@ export const Home = () => {
         <View style={styles.buttonContainer}>
           <Pressable style={styles.button} onPress={() => playSound('H1_C')}>
             <Text style={styles.buttonText}>Testar Audio</Text>
+          </Pressable>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Pressable style={styles.button} onPress={playMultiple}>
+            <Text style={styles.buttonText}>MultipleAudio</Text>
           </Pressable>
         </View>
 
