@@ -58,6 +58,24 @@ export const Home = () => {
 
   // ------- SOUND -------
 
+  // ------- SOUND2 -------
+
+  function playSound2(sound) {
+    console.log('Playing');
+    Audio.Sound.createAsync(sound, { shouldPlay: true })
+      .then((res) => {
+        res.sound.setOnPlaybackStatusUpdate((status) => {
+          if (!status.didJustFinish) return;
+          console.log('Unloading');
+          res.sound.unloadAsync().catch(() => {});
+        });
+      })
+      .catch((error) => {});
+  }
+  const somteste = require('../../assets/audios/HAudios/H1_L.wav');
+
+  // ------- SOUND2 -------
+
   const defineWebPort = async () => {
     console.log('defineWebPort pressed');
     let url = '';
@@ -75,20 +93,6 @@ export const Home = () => {
     fetchApi();
   }, [isOn]);
 
-  // const getDistance = (endpoint) => {
-  //   return axios
-  //     .get(`${sensorURL}/distance${endpoint}`)
-  //     .then((response) => {
-  //       if (response.data?.distance) {
-  //         setSensorLeft(response.data.distance);
-  //         console.log('L -> ' + response.data.distance);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
-
   const fetchApi = async () => {
     if (isOn) {
       console.log('Entrou no if');
@@ -100,7 +104,7 @@ export const Home = () => {
             if (response.data?.distance) {
               setSensorLeft(response.data.distance);
               console.log('L -> ' + response.data.distance);
-              playSound(`H1_L`);
+              playSound(somteste);
             }
           })
           .catch((err) => {
@@ -113,7 +117,7 @@ export const Home = () => {
               if (response.data?.distance) {
                 setSensorMiddle(response.data.distance);
                 console.log('C -> ' + response.data.distance);
-                playSound(`H1_C`);
+                playSound(somteste);
               }
             })
             .catch((err) => {
@@ -126,7 +130,7 @@ export const Home = () => {
                 if (response.data?.distance) {
                   setSensorRight(response.data.distance);
                   console.log('R -> ' + response.data.distance);
-                  playSound(`H1_R`);
+                  playSound(somteste);
                 }
               })
               .catch((err) => {
@@ -149,6 +153,7 @@ export const Home = () => {
           if (response.data?.distance) {
             setSensorLeft(response.data.distance);
             console.log('L -> ' + response.data.distance);
+            playSound2(somteste);
           }
         })
         .catch((err) => {
@@ -231,7 +236,7 @@ export const Home = () => {
           </Pressable>
         </View>
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={() => playSound('H1_C')}>
+          <Pressable style={styles.button} onPress={() => playSound2(somteste)}>
             <Text style={styles.buttonText}>Testar Audio</Text>
           </Pressable>
         </View>
