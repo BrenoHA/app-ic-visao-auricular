@@ -141,6 +141,22 @@ export const Home = () => {
     }
   };
 
+  const testL = () => {
+    setTimeout(() => {
+      axios
+        .get(`${sensorURL}/distanceLeft`)
+        .then((response) => {
+          if (response.data?.distance) {
+            setSensorLeft(response.data.distance);
+            console.log('L -> ' + response.data.distance);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }, 500);
+  };
+
   const playMultiple = () => {
     setTimeout(() => {
       console.log('a');
@@ -200,6 +216,12 @@ export const Home = () => {
             onPress={() => setIsOn(true)}
           >
             <Text style={styles.buttonText}>Ligar sensores</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <Pressable style={styles.button} onPress={testL}>
+            <Text style={styles.buttonText}>Test L</Text>
           </Pressable>
         </View>
 
