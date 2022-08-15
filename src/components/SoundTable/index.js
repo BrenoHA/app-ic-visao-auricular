@@ -12,7 +12,7 @@ export const SoundTable = ({ sensorLeft, sensorMiddle, sensorRight }) => {
           {plotSoundPlace(sensorLeft)}
         </View>
         <View style={styles.viewSoundPlace}>
-          <Text style={styles.textSensores}>Sensor M</Text>
+          <Text style={styles.textSensores}>Sensor C</Text>
           {plotSoundPlace(sensorMiddle)}
         </View>
         <View style={styles.viewSoundPlace}>
