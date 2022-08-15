@@ -18,21 +18,6 @@ import { returnFullURL } from '../services/defineWebPort';
 import { getDefaultDistance } from '../utils/defaultDistances';
 import { DeveloperSettings } from './DeveloperSettings';
 
-const H1_L = require('../../assets/audios/HAudios/H1_L.wav');
-const H2_L = require('../../assets/audios/HAudios/H2_L.wav');
-const H3_L = require('../../assets/audios/HAudios/H3_L.wav');
-const H4_L = require('../../assets/audios/HAudios/H4_L.wav');
-
-const H1_C = require('../../assets/audios/HAudios/H1_C.wav');
-const H2_C = require('../../assets/audios/HAudios/H2_C.wav');
-const H3_C = require('../../assets/audios/HAudios/H3_C.wav');
-const H4_C = require('../../assets/audios/HAudios/H4_C.wav');
-
-const H1_R = require('../../assets/audios/HAudios/H1_R.wav');
-const H2_R = require('../../assets/audios/HAudios/H2_R.wav');
-const H3_R = require('../../assets/audios/HAudios/H3_R.wav');
-const H4_R = require('../../assets/audios/HAudios/H4_R.wav');
-
 export const Home = () => {
   const [sensorLeft, setSensorLeft] = useState(0);
   const [sensorMiddle, setSensorMiddle] = useState(0);
@@ -41,22 +26,21 @@ export const Home = () => {
   const [isOn, setIsOn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // ------- SOUND2 -------
-
-  function playSound2(sound) {
-    console.log('Playing');
-    Audio.Sound.createAsync(sound, { shouldPlay: true })
-      .then((res) => {
-        res.sound.setOnPlaybackStatusUpdate((status) => {
-          if (!status.didJustFinish) return;
-          console.log('Unloading');
-          res.sound.unloadAsync().catch(() => {});
-        });
-      })
-      .catch((error) => {});
+  function playSound(name) {
+    console.log(`Playing ${name}`);
+    if (soundLibrary[name]) {
+      sound = soundLibrary[name];
+      Audio.Sound.createAsync(sound, { shouldPlay: true })
+        .then((res) => {
+          res.sound.setOnPlaybackStatusUpdate((status) => {
+            if (!status.didJustFinish) return;
+            console.log('Unloading');
+            res.sound.unloadAsync().catch(() => {});
+          });
+        })
+        .catch((error) => {});
+    }
   }
-
-  // ------- SOUND2 -------
 
   const defineWebPort = async () => {
     console.log('defineWebPort pressed');
@@ -86,7 +70,7 @@ export const Home = () => {
             if (response.data?.distance) {
               setSensorLeft(response.data.distance);
               console.log('L -> ' + response.data.distance);
-              playSound2(H1_L);
+              playSound(`H${getDefaultDistance(response.data.distance)}_L`);
             }
           })
           .catch((err) => {
@@ -99,7 +83,7 @@ export const Home = () => {
               if (response.data?.distance) {
                 setSensorMiddle(response.data.distance);
                 console.log('C -> ' + response.data.distance);
-                playSound2(H1_L);
+                playSound(`H${getDefaultDistance(response.data.distance)}_C`);
               }
             })
             .catch((err) => {
@@ -112,7 +96,7 @@ export const Home = () => {
                 if (response.data?.distance) {
                   setSensorRight(response.data.distance);
                   console.log('R -> ' + response.data.distance);
-                  playSound2(H1_L);
+                  playSound(`H${getDefaultDistance(response.data.distance)}_R`);
                 }
               })
               .catch((err) => {
@@ -135,7 +119,7 @@ export const Home = () => {
           if (response.data?.distance) {
             setSensorLeft(response.data.distance);
             console.log('L -> ' + response.data.distance);
-            playSound2(H1_L);
+            playSound(`H${getDefaultDistance(response.data.distance)}_L`);
           }
         })
         .catch((err) => {
@@ -189,12 +173,12 @@ export const Home = () => {
 
         <View style={styles.buttonContainer}>
           <Pressable style={styles.button} onPress={testL}>
-            <Text style={styles.buttonText}>Test L</Text>
+            <Text style={styles.buttonText}>Testar L</Text>
           </Pressable>
         </View>
 
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={() => playSound2(H1_L)}>
+          <Pressable style={styles.button} onPress={() => playSound('H2_C')}>
             <Text style={styles.buttonText}>Testar Audio</Text>
           </Pressable>
         </View>
