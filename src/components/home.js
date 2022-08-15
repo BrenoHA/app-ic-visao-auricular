@@ -18,6 +18,21 @@ import { returnFullURL } from '../services/defineWebPort';
 import { getDefaultDistance } from '../utils/defaultDistances';
 import { DeveloperSettings } from './DeveloperSettings';
 
+const H1_L = require('../../assets/audios/HAudios/H1_L.wav');
+const H2_L = require('../../assets/audios/HAudios/H2_L.wav');
+const H3_L = require('../../assets/audios/HAudios/H3_L.wav');
+const H4_L = require('../../assets/audios/HAudios/H4_L.wav');
+
+const H1_C = require('../../assets/audios/HAudios/H1_C.wav');
+const H2_C = require('../../assets/audios/HAudios/H2_C.wav');
+const H3_C = require('../../assets/audios/HAudios/H3_C.wav');
+const H4_C = require('../../assets/audios/HAudios/H4_C.wav');
+
+const H1_R = require('../../assets/audios/HAudios/H1_R.wav');
+const H2_R = require('../../assets/audios/HAudios/H2_R.wav');
+const H3_R = require('../../assets/audios/HAudios/H3_R.wav');
+const H4_R = require('../../assets/audios/HAudios/H4_R.wav');
+
 export const Home = () => {
   const [sensorLeft, setSensorLeft] = useState(0);
   const [sensorMiddle, setSensorMiddle] = useState(0);
@@ -25,38 +40,6 @@ export const Home = () => {
   const [sensorURL, setSensorURL] = useState();
   const [isOn, setIsOn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  // ------- SOUND -------
-
-  const soundObjects = {};
-
-  const loadAudios = () => {
-    console.log('loadAudios');
-
-    const promisedSoundObjects = [];
-
-    for (const name in soundLibrary) {
-      const sound = soundLibrary[name];
-
-      soundObjects[name] = new Audio.Sound();
-
-      promisedSoundObjects.push(soundObjects[name].loadAsync(sound));
-    }
-
-    return Promise.all([...promisedSoundObjects]);
-  };
-
-  const playSound = async (name) => {
-    try {
-      if (soundObjects[name]) {
-        await soundObjects[name].replayAsync();
-      }
-    } catch (error) {
-      console.warn(error);
-    }
-  };
-
-  // ------- SOUND -------
 
   // ------- SOUND2 -------
 
@@ -72,7 +55,6 @@ export const Home = () => {
       })
       .catch((error) => {});
   }
-  const somteste = require('../../assets/audios/HAudios/H1_L.wav');
 
   // ------- SOUND2 -------
 
@@ -104,7 +86,7 @@ export const Home = () => {
             if (response.data?.distance) {
               setSensorLeft(response.data.distance);
               console.log('L -> ' + response.data.distance);
-              playSound2(somteste);
+              playSound2(H1_L);
             }
           })
           .catch((err) => {
@@ -117,7 +99,7 @@ export const Home = () => {
               if (response.data?.distance) {
                 setSensorMiddle(response.data.distance);
                 console.log('C -> ' + response.data.distance);
-                playSound2(somteste);
+                playSound2(H1_L);
               }
             })
             .catch((err) => {
@@ -130,7 +112,7 @@ export const Home = () => {
                 if (response.data?.distance) {
                   setSensorRight(response.data.distance);
                   console.log('R -> ' + response.data.distance);
-                  playSound2(somteste);
+                  playSound2(H1_L);
                 }
               })
               .catch((err) => {
@@ -153,32 +135,13 @@ export const Home = () => {
           if (response.data?.distance) {
             setSensorLeft(response.data.distance);
             console.log('L -> ' + response.data.distance);
-            playSound2(somteste);
+            playSound2(H1_L);
           }
         })
         .catch((err) => {
           console.log(err);
         });
     }, 500);
-  };
-
-  const playMultiple = () => {
-    setTimeout(() => {
-      console.log('a');
-      playSound2(somteste);
-
-      setTimeout(() => {
-        console.log('b');
-        playSound2(somteste);
-
-        setTimeout(() => {
-          console.log('c');
-          playSound2(somteste);
-
-          setTimeout(playMultiple, 500);
-        }, 300);
-      }, 300);
-    }, 300);
   };
 
   return (
@@ -231,18 +194,8 @@ export const Home = () => {
         </View>
 
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={loadAudios}>
-            <Text style={styles.buttonText}>Carregar Audios</Text>
-          </Pressable>
-        </View>
-        <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={() => playSound2(somteste)}>
+          <Pressable style={styles.button} onPress={() => playSound2(H1_L)}>
             <Text style={styles.buttonText}>Testar Audio</Text>
-          </Pressable>
-        </View>
-        <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={playMultiple}>
-            <Text style={styles.buttonText}>MultipleAudio</Text>
           </Pressable>
         </View>
 
