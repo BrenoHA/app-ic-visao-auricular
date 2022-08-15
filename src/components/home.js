@@ -25,6 +25,7 @@ export const Home = () => {
   const [sensorURL, setSensorURL] = useState();
   const [isOn, setIsOn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPlaying, setCurrentPlaying] = useState('');
 
   function playSound(name) {
     console.log(`Playing ${name}`);
@@ -71,6 +72,9 @@ export const Home = () => {
               setSensorLeft(response.data.distance);
               console.log('L -> ' + response.data.distance);
               playSound(`H${getDefaultDistance(response.data.distance)}_L`);
+              setCurrentPlaying(
+                `H${getDefaultDistance(response.data.distance)}_L`
+              );
             }
           })
           .catch((err) => {
@@ -84,6 +88,9 @@ export const Home = () => {
                 setSensorMiddle(response.data.distance);
                 console.log('C -> ' + response.data.distance);
                 playSound(`H${getDefaultDistance(response.data.distance)}_C`);
+                setCurrentPlaying(
+                  `H${getDefaultDistance(response.data.distance)}_C`
+                );
               }
             })
             .catch((err) => {
@@ -97,6 +104,9 @@ export const Home = () => {
                   setSensorRight(response.data.distance);
                   console.log('R -> ' + response.data.distance);
                   playSound(`H${getDefaultDistance(response.data.distance)}_R`);
+                  setCurrentPlaying(
+                    `H${getDefaultDistance(response.data.distance)}_R`
+                  );
                 }
               })
               .catch((err) => {
@@ -120,6 +130,9 @@ export const Home = () => {
             setSensorLeft(response.data.distance);
             console.log('L -> ' + response.data.distance);
             playSound(`H${getDefaultDistance(response.data.distance)}_L`);
+            setCurrentPlaying(
+              `H${getDefaultDistance(response.data.distance)}_L`
+            );
           }
         })
         .catch((err) => {
@@ -137,6 +150,8 @@ export const Home = () => {
         ) : (
           <Text style={styles.appTitle}>Visão Auricular</Text>
         )}
+
+        <Text style={styles.simpleText}>{currentPlaying}</Text>
 
         <MeasuredDistance
           sensorLeft={sensorLeft}
