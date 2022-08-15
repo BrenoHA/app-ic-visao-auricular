@@ -104,7 +104,7 @@ export const Home = () => {
             if (response.data?.distance) {
               setSensorLeft(response.data.distance);
               console.log('L -> ' + response.data.distance);
-              playSound(somteste);
+              playSound2(somteste);
             }
           })
           .catch((err) => {
@@ -117,7 +117,7 @@ export const Home = () => {
               if (response.data?.distance) {
                 setSensorMiddle(response.data.distance);
                 console.log('C -> ' + response.data.distance);
-                playSound(somteste);
+                playSound2(somteste);
               }
             })
             .catch((err) => {
@@ -130,7 +130,7 @@ export const Home = () => {
                 if (response.data?.distance) {
                   setSensorRight(response.data.distance);
                   console.log('R -> ' + response.data.distance);
-                  playSound(somteste);
+                  playSound2(somteste);
                 }
               })
               .catch((err) => {
@@ -165,15 +165,15 @@ export const Home = () => {
   const playMultiple = () => {
     setTimeout(() => {
       console.log('a');
-      playSound(`H1_L`);
+      playSound2(somteste);
 
       setTimeout(() => {
         console.log('b');
-        playSound(`H2_C`);
+        playSound2(somteste);
 
         setTimeout(() => {
           console.log('c');
-          playSound(`H3_R`);
+          playSound2(somteste);
 
           setTimeout(playMultiple, 500);
         }, 300);
