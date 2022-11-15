@@ -1,3 +1,3 @@
 # app-ic-visao-auricular
 
-Aplicativo do projeto de pesquisa Visão Auricular, feito em React Native
+App from the Vision Auricular research project, made in React Native
